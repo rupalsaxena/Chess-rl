@@ -50,33 +50,33 @@ class Chess_SARSA:
             epsilon_f = self.epsilon_0 / (1 + self.beta * n)   ## DECAYING EPSILON
             Done=0                                             ## SET DONE TO ZERO (BEGINNING OF THE EPISODE)
             i = 1                                              ## COUNTER FOR NUMBER OF ACTIONS
-            
+
             S,X,allowed_a=self.env.Initialise_game()           ## INITIALISE GAME
-            
+
             #Forward pass neural network
             Q_values, hid_layer_act = self.nn.Forwardprop(X, W1, b1, W2, b2)
-            
+
             #Get the index of the aLlowed actions
             idx_allowed,_=np.where(allowed_a==1)
-                    
+
             #Selecting the action with e-greedy
             Q_values_allowed=Q_values[idx_allowed]
             a_agent = self.h.epsilongreedy(Q_values_allowed, idx_allowed, epsilon_f)
-            
-            # Initialise eligibility traces 
-            #e1: everything gets updated 
+
+            # Initialise eligibility traces
+            #e1: everything gets updated
             #e2: only the action taken gets updated
-            if self.eligibility_trace==True: 
+            if self.eligibility_trace==True:
                 e1=np.zeros([N_in,self.N_h])
                 e2=np.zeros([self.N_h, N_a])
-     
+
             while Done==0:                                   ## START THE EPISODE
                 if self.eligibility_trace:
                     e1=e1+1
                     e2[:, a_agent]=e2[:, a_agent]+1
 
                 S_next,X_next,allowed_a_next,R,Done=self.env.OneStep(a_agent)
-                
+
                 ## THE EPISODE HAS ENDED, UPDATE...BE CAREFUL, THIS IS THE LAST STEP OF THE EPISODE
                 if Done==1:
                     #calculate the error
@@ -84,17 +84,17 @@ class Chess_SARSA:
 
                     #backpropagate the error
                     W1, W2[:, a_agent], b1, b2[a_agent]= self.nn.Backpropagation(self.eta, a_agent, delta, Q_values, hid_layer_act, X, W1, W2, b1, b2)
-                
-                    if self.eligibility_trace:    
-                        W1=W1+self.eta*delta*e1 
+
+                    if self.eligibility_trace:
+                        W1=W1+self.eta*delta*e1
                         W2[:, a_agent]=W2[:, a_agent]+self.eta*delta*e2[:, a_agent]
-                
+
                     self.R_save[n]=np.copy(R)
                     self.N_moves_save[n]=np.copy(i)
-                
+
                     ##TWO CHOICES: if R==1, then checkmate. Else, draw.
                     break
-                
+
                 # IF THE EPISODE IS NOT OVER...
                 else:
                     #Get the qvalues of the next state
@@ -106,27 +106,28 @@ class Chess_SARSA:
 
                     #select the action with e-greedy
                     a_agent_next = self.h.epsilongreedy(Q_values_allowed_next, idx_allowed_next, epsilon_f)
-                    
+
                     #Computing the error
                     delta=R+self.gamma*Q_values_next[a_agent_next]-Q_values[a_agent]
 
                     #backpropagate the error and update the weights
                     W1, W2[:, a_agent], b1, b2[a_agent] = self.nn.Backpropagation(self.eta, a_agent, delta, Q_values, hid_layer_act, X, W1, W2, b1, b2)
-        
-                    if self.eligibility_trace:    
-                        W1=W1+self.eta*delta*e1  
+
+                    if self.eligibility_trace:
+                        W1=W1+self.eta*delta*e1
                         e1=self.gamma*lamb*e1
-                        W2[:, a_agent]=W2[:, a_agent]+self.eta*delta*e2[:, a_agent]  
+                        W2[:, a_agent]=W2[:, a_agent]+self.eta*delta*e2[:, a_agent]
                         e2=self.gamma*lamb*e2
-            
-                # NEXT STATE AND CO. BECOME ACTUAL STATE...     
+
+                # NEXT STATE AND CO. BECOME ACTUAL STATE...
                 S=np.copy(S_next)
                 X=np.copy(X_next)
                 a_agent = np.copy(a_agent_next)
                 allowed_a = np.copy(allowed_a_next)
+                Q_values = np.copy(Q_values_next)
                 i += 1  # UPDATE COUNTER FOR NUMBER OF ACTIONS
         print('My Agent, Average reward:',np.mean(self.R_save),'Number of steps: ',np.mean(self.N_moves_save))
-    
+
     def plot(self):
         R = pd.DataFrame(self.R_save)
         Moves = pd.DataFrame(self.N_moves_save)
