@@ -14,6 +14,7 @@ class helpers:
     
     
     def reluder(self, x):
+        # relu derivative
         if x.all()>0:
             return 1
         else:
