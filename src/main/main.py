@@ -23,13 +23,10 @@ def main():
         analyse_chess.analyse()
 
     if algo == "sarsa":
-        # sarsa
         rl_algo = Chess_SARSA(config)
     elif algo == "q-learning":
-        # q-learning
         rl_algo = Chess_QLearning(config)
     else:
-        # random algorithm
         rl_algo = Chess_Random()
 
     rl_algo.train()
