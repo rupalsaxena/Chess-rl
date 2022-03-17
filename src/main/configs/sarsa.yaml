@@ -1,9 +1,9 @@
 algo: sarsa
 analyse: False    # False if u don't wanna print init analysis # True otherwise
 N_h: 200          # NUMBER OF HIDDEN NODES
-epsilon_0: 0.05    # STARTING VALUE OF EPSILON FOR THE EPSILON-GREEDY POLICY ##Original value of epsilon: 0.2
+epsilon_0: 0.2    # STARTING VALUE OF EPSILON FOR THE EPSILON-GREEDY POLICY ##Original value of epsilon: 0.2
 beta: 0.00005      # THE PARAMETER SETS HOW QUICKLY THE VALUE OF EPSILON IS DECAYING (SEE epsilon_f BELOW)
 gamma: 0.85        # THE DISCOUNT FACTOR
 eta: 0.0035        # THE LEARNING RATE
 N_episodes: 10000  # THE NUMBER OF GAMES TO BE PLAYED  #Original N_episodes: 100'000
-eligibility_trace: True
+eligibility_trace: False
