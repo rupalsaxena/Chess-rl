@@ -11,6 +11,8 @@ CONFIG_PATH = "src/main/configs/sarsa.yaml"
 #CONFIG_PATH = "src/main/configs/q-learning.yaml"
 #CONFIG_PATH = "src/main/configs/random.yaml"
 
+CONFIG_PATH = os.environ["CONFIG_PATH"]
+
 def main():
     h = helpers()
     config = h.read_yaml(CONFIG_PATH)

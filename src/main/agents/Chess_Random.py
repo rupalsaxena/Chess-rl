@@ -34,3 +34,6 @@ class Chess_Random:
         # AS YOU SEE, THE PERFORMANCE OF A RANDOM AGENT ARE NOT GREAT, SINCE THE MAJORITY OF THE POSITIONS END WITH A DRAW 
         # (THE ENEMY KING IS NOT IN CHECK AND CAN'T MOVE)
         print('Random_Agent, Average reward:',np.mean(R_save_random),'Number of steps: ',np.mean(N_moves_save_random))
+
+    def plot(self):
+        pass
