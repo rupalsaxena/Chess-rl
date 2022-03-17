@@ -13,7 +13,7 @@ class helpers:
         return 1 / (1 + np.exp(-x))  
     
     
-    def reluder(x):
+    def reluder(self, x):
         if x.all()>0:
             return 1
         else:
