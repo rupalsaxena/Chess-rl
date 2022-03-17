@@ -11,6 +11,13 @@ class helpers:
     
     def sig(self, x):
         return 1 / (1 + np.exp(-x))  
+    
+    
+    def reluder(x):
+        if x.all()>0:
+            return 1
+        else:
+            return 0
 
     ##Keeping track of the index to be able to get the right action
     def epsilongreedy(self, Qval_allowed, idx_allowed, epsilon):
