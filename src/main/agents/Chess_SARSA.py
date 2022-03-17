@@ -129,14 +129,16 @@ class Chess_SARSA:
         print('My Agent, Average reward:',np.mean(self.R_save),'Number of steps: ',np.mean(self.N_moves_save))
 
     def plot(self):
-        R = pd.DataFrame(self.R_save)
-        Moves = pd.DataFrame(self.N_moves_save)
-        ema_r = R.ewm(com=500).mean()
-        ema_mo = Moves.ewm(com=500).mean()
-        fig, (rew, mov) = plt.subplots(2)
-        Time=np.array(range(len(ema_r)))
-        mov.scatter(Time, ema_mo, label="# moves", color="red")
-        rew.scatter(Time, ema_r, label="Reward", color="blue")
-        plt.xlabel("Episodes")
-        plt.legend()
-        plt.show()
+        import pandas as pd
+        pandaR = pd.DataFrame(self.R_save)
+        pandaN = pd.DataFrame(self.N_moves_save)
+        ema_r = pandaR.ewm(alpha=0.0001, adjust = False).mean()
+        ema_m = pandaN.ewm(alpha=0.0001, adjust = False).mean()
+        time=np.arange(1, (len(R_save)+1))
+        ##Only one at a time and no subplot would look better but in the meantime  
+        plt.subplot(2, 1, 1)
+        plt.scatter(time, ema_m)
+        plt.subplot(2, 1, 2)
+        plt.scatter(time, ema_r)
+    
+   
