@@ -130,19 +130,12 @@ class Chess_SARSA:
     def plot(self):
         R = pd.DataFrame(self.R_save)
         Moves = pd.DataFrame(self.N_moves_save)
-
         ema_r = R.ewm(com=500).mean()
-
         ema_mo = Moves.ewm(com=500).mean()
-
         fig, (rew, mov) = plt.subplots(2)
-
         Time=np.array(range(len(ema_r)))
-
         mov.scatter(Time, ema_mo, label="# moves", color="red")
         rew.scatter(Time, ema_r, label="Reward", color="blue")
-
         plt.xlabel("Episodes")
-
         plt.legend()
         plt.show()
