@@ -134,11 +134,10 @@ class Chess_SARSA:
         pandaN = pd.DataFrame(self.N_moves_save)
         ema_r = pandaR.ewm(alpha=0.0001, adjust = False).mean()
         ema_m = pandaN.ewm(alpha=0.0001, adjust = False).mean()
-        time=np.arange(1, (len(R_save)+1))
+        time=np.arange(1, (len(self.R_save)+1))
         ##Only one at a time and no subplot would look better but in the meantime  
         plt.subplot(2, 1, 1)
         plt.scatter(time, ema_m)
         plt.subplot(2, 1, 2)
         plt.scatter(time, ema_r)
-    
-   
+        plt.show()
