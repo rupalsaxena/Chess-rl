@@ -129,18 +129,23 @@ class Chess_SARSA:
                 allowed_a = np.copy(allowed_a_next)
                 Q_values = np.copy(Q_values_next)
                 i += 1  # UPDATE COUNTER FOR NUMBER OF ACTIONS
+
         print('My Agent, Average reward:',np.mean(self.R_save),'Number of steps: ',np.mean(self.N_moves_save))
 
     def plot(self):
-        import pandas as pd
         pandaR = pd.DataFrame(self.R_save)
         pandaN = pd.DataFrame(self.N_moves_save)
         ema_r = pandaR.ewm(alpha=0.001, adjust = False).mean()
         ema_m = pandaN.ewm(alpha=0.001, adjust = False).mean()
         time=np.arange(1, (len(self.R_save)+1))
+
         ##Only one at a time and no subplot would look better but in the meantime
         plt.subplot(2, 1, 1)
         plt.scatter(time, ema_m)
+        plt.xlabel("time")
+        plt.ylabel("N moves")
         plt.subplot(2, 1, 2)
         plt.scatter(time, ema_r)
+        plt.xlabel("time")
+        plt.ylabel("Average reward")
         plt.show()
