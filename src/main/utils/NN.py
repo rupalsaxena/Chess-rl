@@ -6,15 +6,10 @@ class NN:
         self.h = helpers()
 
     def Forwardprop(self, x, W1, b1, W2, b2):
-
         hid_layer = np.dot(x, W1)+b1
         hid_layer_act = np.maximum(hid_layer, 0)
         out_layer=np.dot(hid_layer_act, W2)+b2
         out_layer_act =np.maximum(out_layer, 0)
-        print("       ")
-        print(W1)
-
-
         return out_layer_act, hid_layer_act
 
     ##done similarly to the "chess student" file
