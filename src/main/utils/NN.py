@@ -12,7 +12,8 @@ class NN:
         out_layer_act =np.maximum(out_layer, 0)
         return out_layer_act, hid_layer_act
 
-    ##done similarly to the "chess student" file
+    ###TO REMOVE
+    ##done similarly to the "chess student" file 
     #W2 : only modifying the weights going to a_agent
     #W1 : as the features are represented with all the 58 entries (unlike the action taken), all weights are updated (?)
     def BackpropagationFirstVersion(self, eta, a_agent, delta, out_layer_act, hid_layer_act, x,  W1, W2, b1, b2):
@@ -29,8 +30,10 @@ class NN:
 
         return  W1,  W2[:, a_agent], b1, b2[a_agent]
 
+    ##Adapted from the Lab 1 of the Reinforcement Learning lecture
+    ##Corrected!
     def Backpropagation(self, eta, a_agent, delta, out_layer_act, hid_layer_act, x,  W1, W2, b1, b2):
-        delta_W2=delta*(out_layer_act[a_agent])*(out_layer_act[a_agent]>0)
+        delta_W2=delta*hid_layer_act*(out_layer_act[a_agent]>0)
         delta_W1=np.outer(x, (delta*(out_layer_act[a_agent]>0)*W2[:,a_agent]*(hid_layer_act>0)))
 
         W2[:, a_agent]=W2[:, a_agent]+eta*delta_W2
