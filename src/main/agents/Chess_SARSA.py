@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from tqdm import tqdm
 
 from env.Chess_env import Chess_Env
 from env.generate_game import generate_game
@@ -49,7 +50,7 @@ class Chess_SARSA:
             self.eta=0.08
 
         # TRAINING LOOP BONE STRUCTURE...
-        for n in range(self.N_episodes):
+        for n in tqdm(range(self.N_episodes)):
             epsilon_f = self.epsilon_0 / (1 + self.beta * n)   ## DECAYING EPSILON
             Done=0                                             ## SET DONE TO ZERO (BEGINNING OF THE EPISODE)
             i = 1                                              ## COUNTER FOR NUMBER OF ACTIONS
