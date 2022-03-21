@@ -1,0 +1,2 @@
+algo: random
+analyse: True # False if u don't wanna print initial analysis

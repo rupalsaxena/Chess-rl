@@ -1,0 +1,2 @@
+algo: q-learning
+analyse: False # False if u don't wanna print init analysis # True otherwise
