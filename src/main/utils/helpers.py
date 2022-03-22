@@ -21,10 +21,10 @@ class helpers:
             return 0
 
     ##Keeping track of the index to be able to get the right action
-    def epsilongreedy(self, Qval_allowed, idx_allowed, epsilon, rand_value):
+    def epsilongreedy(self, Qval_allowed, idx_allowed, epsilon):
 
         N_a=np.shape(Qval_allowed)[0]
-        #rand_value=np.random.uniform(0,1)
+        rand_value=np.random.uniform(0,1)
         rand_a=rand_value<epsilon
 
         if rand_a==True:
