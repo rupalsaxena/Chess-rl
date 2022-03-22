@@ -17,7 +17,7 @@ class Chess_SARSA:
         self.gamma = config["gamma"]
         self.eta = config["eta"]
         self.eligibility_trace = config["eligibility_trace"]
-
+        self.s = config["s"]
         self.nn = NN()
         self.h = helpers()
 
@@ -30,6 +30,9 @@ class Chess_SARSA:
 
         N_in=np.shape(X)[0]    ## INPUT SIZE
 
+        #Initialise random seeded array
+        np.random.seed(self.s)
+        randomvalues = [np.random.uniform(0,1) for i in range(self.N_episodes+100)]
         ## INITALISE YOUR NEURAL NETWORK...
         ##Xavier init
         W1=np.random.randn(N_in, self.N_h)*np.sqrt(1/(N_in))
@@ -65,7 +68,8 @@ class Chess_SARSA:
 
             #Selecting the action with e-greedy
             Q_values_allowed=Q_values[idx_allowed]
-            a_agent = self.h.epsilongreedy(Q_values_allowed, idx_allowed, epsilon_f)
+            randval = randomvalues[n]
+            a_agent = self.h.epsilongreedy(Q_values_allowed, idx_allowed, epsilon_f, randval)
 
             # Initialise eligibility traces
             #e1: everything gets updated
@@ -109,7 +113,8 @@ class Chess_SARSA:
                     Q_values_allowed_next=Q_values_next[idx_allowed_next]
 
                     #select the action with e-greedy
-                    a_agent_next = self.h.epsilongreedy(Q_values_allowed_next, idx_allowed_next, epsilon_f)
+                    randval_next = randomvalues[n+i]
+                    a_agent_next = self.h.epsilongreedy(Q_values_allowed_next, idx_allowed_next, epsilon_f, randval_next)
 
                     #Computing the error
                     delta=R+self.gamma*Q_values_next[a_agent_next]-Q_values[a_agent]
