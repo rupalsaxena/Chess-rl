@@ -17,7 +17,7 @@ class Chess_SARSA:
         self.gamma = config["gamma"]
         self.eta = config["eta"]
         self.eligibility_trace = config["eligibility_trace"]
-
+        self.s = config["s"]
         self.nn = NN()
         self.h = helpers()
 
@@ -30,6 +30,8 @@ class Chess_SARSA:
 
         N_in=np.shape(X)[0]    ## INPUT SIZE
 
+        #Initialise random seeded array
+        np.random.seed(self.s)
         ## INITALISE YOUR NEURAL NETWORK...
         ##Xavier init
         W1=np.random.randn(N_in, self.N_h)*np.sqrt(1/(N_in))
@@ -143,10 +145,10 @@ class Chess_SARSA:
         ##Only one at a time and no subplot would look better but in the meantime
         plt.subplot(2, 1, 1)
         plt.scatter(time, ema_m)
-        plt.xlabel("time")
-        plt.ylabel("N moves")
+        plt.xlabel("Time")
+        plt.ylabel("Average number of moves")
         plt.subplot(2, 1, 2)
         plt.scatter(time, ema_r)
-        plt.xlabel("time")
+        plt.xlabel("Time")
         plt.ylabel("Average reward")
         plt.show()

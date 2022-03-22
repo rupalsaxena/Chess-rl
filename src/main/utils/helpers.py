@@ -8,11 +8,11 @@ class helpers:
     def read_yaml(self, path):
         with open(path, "r") as f:
             return yaml.safe_load(f)
-    
+
     def sig(self, x):
-        return 1 / (1 + np.exp(-x))  
-    
-    
+        return 1 / (1 + np.exp(-x))
+
+
     def reluder(self, x):
         # relu derivative
         if x.all()>0:
@@ -33,5 +33,5 @@ class helpers:
         else:
             best=np.argmax(Qval_allowed)
             a=idx_allowed[best]
-        
+
         return a
