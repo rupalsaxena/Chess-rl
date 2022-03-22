@@ -9,3 +9,4 @@ gamma: 0.75       # new parameters
 eta: 0.0035       # THE LEARNING RATE
 N_episodes: 100000 # THE NUMBER OF GAMES TO BE PLAYED
 eligibility_trace: False
+s: 74
