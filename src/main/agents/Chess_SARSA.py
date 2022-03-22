@@ -32,7 +32,6 @@ class Chess_SARSA:
 
         #Initialise random seeded array
         np.random.seed(self.s)
-        randomvalues = [np.random.uniform(0,1) for i in range(self.N_episodes+100)]
         ## INITALISE YOUR NEURAL NETWORK...
         ##Xavier init
         W1=np.random.randn(N_in, self.N_h)*np.sqrt(1/(N_in))
@@ -68,8 +67,7 @@ class Chess_SARSA:
 
             #Selecting the action with e-greedy
             Q_values_allowed=Q_values[idx_allowed]
-            randval = randomvalues[n]
-            a_agent = self.h.epsilongreedy(Q_values_allowed, idx_allowed, epsilon_f, randval)
+            a_agent = self.h.epsilongreedy(Q_values_allowed, idx_allowed, epsilon_f)
 
             # Initialise eligibility traces
             #e1: everything gets updated
@@ -113,8 +111,7 @@ class Chess_SARSA:
                     Q_values_allowed_next=Q_values_next[idx_allowed_next]
 
                     #select the action with e-greedy
-                    randval_next = randomvalues[n+i]
-                    a_agent_next = self.h.epsilongreedy(Q_values_allowed_next, idx_allowed_next, epsilon_f, randval_next)
+                    a_agent_next = self.h.epsilongreedy(Q_values_allowed_next, idx_allowed_next, epsilon_f)
 
                     #Computing the error
                     delta=R+self.gamma*Q_values_next[a_agent_next]-Q_values[a_agent]
@@ -148,10 +145,10 @@ class Chess_SARSA:
         ##Only one at a time and no subplot would look better but in the meantime
         plt.subplot(2, 1, 1)
         plt.scatter(time, ema_m)
-        plt.xlabel("time")
-        plt.ylabel("N moves")
+        plt.xlabel("Time")
+        plt.ylabel("Average number of moves")
         plt.subplot(2, 1, 2)
         plt.scatter(time, ema_r)
-        plt.xlabel("time")
+        plt.xlabel("Time")
         plt.ylabel("Average reward")
         plt.show()
