@@ -7,7 +7,7 @@ epsilon_0: 0.2    # STARTING VALUE OF EPSILON FOR THE EPSILON-GREEDY POLICY ##Or
 beta: 0.01        # new tuned parameters
 gamma: 0.75       # new tuned parameters
 eta: 0.0035       # THE LEARNING RATE
-N_episodes: 100000 # THE NUMBER OF GAMES TO BE PLAYED
+N_episodes: 2000 # THE NUMBER OF GAMES TO BE PLAYED
 eligibility_trace: False
 s: 3              #Random seed to ensure reproduciility TO NOT MODIFY
 Reward_Check: 1   #Reward if check; used to change reward representation
