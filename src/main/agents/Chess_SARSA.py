@@ -61,8 +61,8 @@ class Chess_SARSA:
             S,X,allowed_a=self.env.Initialise_game()           ## INITIALISE GAME
 
             #Forward pass neural network
-            #Q_values, hid_layer_act = self.nn.Forwardprop(X, W1, b1, W2, b2)
-            Q_values, out_layer, hid_layer_act, hid_layer = self.nn.Forwardprop(X, W1, b1, W2, b2)
+            Q_values, hid_layer_act = self.nn.Forwardprop(X, W1, b1, W2, b2)
+            #Q_values, out_layer, hid_layer_act, hid_layer = self.nn.Forwardprop(X, W1, b1, W2, b2)
 
             #Get the index of the aLlowed actions
             idx_allowed,_=np.where(allowed_a==1)
@@ -99,8 +99,8 @@ class Chess_SARSA:
                     delta=Rw-Q_values[a_agent]
 
                     #backpropagate the error
-                    #W1, W2[:, a_agent], b1, b2[a_agent]= self.nn.Backpropagation(self.eta, a_agent, delta, Q_values, hid_layer_act, X, W1, W2, b1, b2)
-                    W1, W2[:, a_agent], b1, b2[a_agent]= self.nn.Backpropagation(self.eta, a_agent, out_layer, hid_layer_act, hid_layer, X, W1, W2, b1, b2)
+                    W1, W2[:, a_agent], b1, b2[a_agent]= self.nn.Backpropagation(self.eta, a_agent, delta, Q_values, hid_layer_act, X, W1, W2, b1, b2)
+                    #W1, W2[:, a_agent], b1, b2[a_agent]= self.nn.Backpropagation(self.eta, a_agent, out_layer, hid_layer_act, hid_layer, X, W1, W2, b1, b2)
 
                     if self.eligibility_trace:
                         W1=W1+self.eta*delta*e1
@@ -115,7 +115,8 @@ class Chess_SARSA:
                 # IF THE EPISODE IS NOT OVER...
                 else:
                     #Get the qvalues of the next state
-                    Q_values_next, _, _, _ = self.nn.Forwardprop(X_next, W1, b1, W2, b2)
+                    Q_values_next, _ = self.nn.Forwardprop(X_next, W1, b1, W2, b2)
+                    #Q_values_next, _, _, _ = self.nn.Forwardprop(X_next, W1, b1, W2, b2)
 
                     #selecting the qvalues of the allowed actions
                     idx_allowed_next,_=np.where(allowed_a_next==1)
@@ -128,8 +129,8 @@ class Chess_SARSA:
                     delta=R+self.gamma*Q_values_next[a_agent_next]-Q_values[a_agent]
 
                     #backpropagate the error and update the weights
-                    #W1, W2[:, a_agent], b1, b2[a_agent] = self.nn.Backpropagation(self.eta, a_agent, delta, Q_values, hid_layer_act, X, W1, W2, b1, b2)
-                    W1, W2[:, a_agent], b1, b2[a_agent] = self.nn.Backpropagation(self.eta, a_agent, out_layer, hid_layer_act, hid_layer, X, W1, W2, b1, b2)
+                    W1, W2[:, a_agent], b1, b2[a_agent] = self.nn.Backpropagation(self.eta, a_agent, delta, Q_values, hid_layer_act, X, W1, W2, b1, b2)
+                    #W1, W2[:, a_agent], b1, b2[a_agent] = self.nn.Backpropagation(self.eta, a_agent, out_layer, hid_layer_act, hid_layer, X, W1, W2, b1, b2)
 
                     if self.eligibility_trace:
                         W1=W1+self.eta*delta*e1

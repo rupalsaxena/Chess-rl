@@ -62,7 +62,7 @@ class Chess_QLearning:
             S, X, allowed_a = self.env.Initialise_game()  ## INITIALISE GAME
 
             # Forward pass neural network
-            Q_values, hid_layer_act = self.nn.Forwardprop_v1(X, W1, b1, W2, b2)
+            Q_values, hid_layer_act = self.nn.Forwardprop(X, W1, b1, W2, b2)
 
             # Get the index of the aLlowed actions
             idx_allowed, _ = np.where(allowed_a == 1)
@@ -90,7 +90,7 @@ class Chess_QLearning:
                     # calculate the error
                     delta = R - Q_values[a_agent]
                     # backpropagate the error
-                    W1, W2[:, a_agent], b1, b2[a_agent] = self.nn.BackpropagationSecondVersion(self.eta, a_agent, delta, Q_values,
+                    W1, W2[:, a_agent], b1, b2[a_agent] = self.nn.Backpropagation(self.eta, a_agent, delta, Q_values,
                                                                                   hid_layer_act, X, W1, W2, b1, b2)
 
                     if self.eligibility_trace:
@@ -106,7 +106,7 @@ class Chess_QLearning:
                 # IF THE EPISODE IS NOT OVER...
                 else:
                     # Get the qvalues of the next state
-                    Q_values_next, _ = self.nn.Forwardprop_v1(X_next, W1, b1, W2, b2)
+                    Q_values_next, _ = self.nn.Forwardprop(X_next, W1, b1, W2, b2)
 
                     # selecting the qvalues of the allowed actions
                     idx_allowed_next, _ = np.where(allowed_a_next == 1)
@@ -119,7 +119,7 @@ class Chess_QLearning:
                     delta = R + self.gamma * np.max(Q_values_allowed_next) - Q_values[a_agent]
 
                     # backpropagate the error and update the weights
-                    W1, W2[:, a_agent], b1, b2[a_agent] = self.nn.BackpropagationSecondVersion(self.eta, a_agent, delta, Q_values,
+                    W1, W2[:, a_agent], b1, b2[a_agent] = self.nn.Backpropagation(self.eta, a_agent, delta, Q_values,
                                                                                   hid_layer_act, X, W1, W2, b1, b2)
 
                     if self.eligibility_trace:
