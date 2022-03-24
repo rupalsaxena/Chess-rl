@@ -18,6 +18,7 @@ class Chess_SARSA:
         self.eta = config["eta"]
         self.eligibility_trace = config["eligibility_trace"]
         self.s = config["s"]
+        self.Reward_Check = config["Reward_Check"]
         self.nn = NN()
         self.h = helpers()
 
@@ -85,8 +86,16 @@ class Chess_SARSA:
 
                 ## THE EPISODE HAS ENDED, UPDATE...BE CAREFUL, THIS IS THE LAST STEP OF THE EPISODE
                 if Done==1:
+                    ##For the change of the representation of the reward
+                    ##Uncomment the if and else to augment reward conditionnaly on a short path
+                    if R==1:
+                        #if i<=5:
+                            Rw = self.Reward_Check
+                        #else: Rw = 1
+                    else: Rw = 0
+
                     #calculate the error
-                    delta=R-Q_values[a_agent]
+                    delta=Rw-Q_values[a_agent]
 
                     #backpropagate the error
                     W1, W2[:, a_agent], b1, b2[a_agent]= self.nn.Backpropagation(self.eta, a_agent, delta, Q_values, hid_layer_act, X, W1, W2, b1, b2)
