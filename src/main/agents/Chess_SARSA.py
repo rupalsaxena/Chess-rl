@@ -47,11 +47,6 @@ class Chess_SARSA:
         self.R_save = np.zeros([self.N_episodes, 1])
         self.N_moves_save = np.zeros([self.N_episodes, 1])
 
-        #Added Eligibility Trace; parameters taken from lab 3
-        if self.eligibility_trace:
-            lamb=0.3
-            self.eta=0.08
-
         # TRAINING LOOP BONE STRUCTURE...
         for n in tqdm(range(self.N_episodes)):
             epsilon_f = self.epsilon_0 / (1 + self.beta * n)   ## DECAYING EPSILON
@@ -61,8 +56,8 @@ class Chess_SARSA:
             S,X,allowed_a=self.env.Initialise_game()           ## INITIALISE GAME
 
             #Forward pass neural network
-            Q_values, hid_layer_act = self.nn.Forwardprop(X, W1, b1, W2, b2)
-            #Q_values, out_layer, hid_layer_act, hid_layer = self.nn.Forwardprop(X, W1, b1, W2, b2)
+            #Q_values, hid_layer_act = self.nn.Forwardprop(X, W1, b1, W2, b2)
+            Q_values, out_layer, hid_layer_act, hid_layer = self.nn.Forwardprop(X, W1, b1, W2, b2)
 
             #Get the index of the aLlowed actions
             idx_allowed,_=np.where(allowed_a==1)
@@ -71,18 +66,7 @@ class Chess_SARSA:
             Q_values_allowed=Q_values[idx_allowed]
             a_agent = self.h.epsilongreedy(Q_values_allowed, idx_allowed, epsilon_f)
 
-            # Initialise eligibility traces
-            #e1: everything gets updated
-            #e2: only the action taken gets updated
-            if self.eligibility_trace==True:
-                e1=np.zeros([N_in,self.N_h])
-                e2=np.zeros([self.N_h, N_a])
-
             while Done==0:                                   ## START THE EPISODE
-                if self.eligibility_trace:
-                    e1=e1+1
-                    e2[:, a_agent]=e2[:, a_agent]+1
-
                 S_next,X_next,allowed_a_next,R,Done=self.env.OneStep(a_agent)
 
                 ## THE EPISODE HAS ENDED, UPDATE...BE CAREFUL, THIS IS THE LAST STEP OF THE EPISODE
@@ -99,12 +83,8 @@ class Chess_SARSA:
                     delta=Rw-Q_values[a_agent]
 
                     #backpropagate the error
-                    W1, W2[:, a_agent], b1, b2[a_agent]= self.nn.Backpropagation(self.eta, a_agent, delta, Q_values, hid_layer_act, X, W1, W2, b1, b2)
-                    #W1, W2[:, a_agent], b1, b2[a_agent]= self.nn.Backpropagation(self.eta, a_agent, out_layer, hid_layer_act, hid_layer, X, W1, W2, b1, b2)
-
-                    if self.eligibility_trace:
-                        W1=W1+self.eta*delta*e1
-                        W2[:, a_agent]=W2[:, a_agent]+self.eta*delta*e2[:, a_agent]
+                    #W1, W2[:, a_agent], b1, b2[a_agent]= self.nn.Backpropagation(self.eta, a_agent, delta, Q_values, hid_layer_act, X, W1, W2, b1, b2)
+                    W1, W2[:, a_agent], b1, b2[a_agent]= self.nn.Backpropagation_v3(self.eta, a_agent, delta, out_layer, hid_layer_act, hid_layer, X, W1, W2, b1, b2)
 
                     self.R_save[n]=np.copy(R)
                     self.N_moves_save[n]=np.copy(i)
@@ -115,8 +95,8 @@ class Chess_SARSA:
                 # IF THE EPISODE IS NOT OVER...
                 else:
                     #Get the qvalues of the next state
-                    Q_values_next, _ = self.nn.Forwardprop(X_next, W1, b1, W2, b2)
-                    #Q_values_next, _, _, _ = self.nn.Forwardprop(X_next, W1, b1, W2, b2)
+                    #Q_values_next, _ = self.nn.Forwardprop(X_next, W1, b1, W2, b2)
+                    Q_values_next, _, _, _ = self.nn.Forwardprop(X_next, W1, b1, W2, b2)
 
                     #selecting the qvalues of the allowed actions
                     idx_allowed_next,_=np.where(allowed_a_next==1)
@@ -129,14 +109,9 @@ class Chess_SARSA:
                     delta=R+self.gamma*Q_values_next[a_agent_next]-Q_values[a_agent]
 
                     #backpropagate the error and update the weights
-                    W1, W2[:, a_agent], b1, b2[a_agent] = self.nn.Backpropagation(self.eta, a_agent, delta, Q_values, hid_layer_act, X, W1, W2, b1, b2)
-                    #W1, W2[:, a_agent], b1, b2[a_agent] = self.nn.Backpropagation(self.eta, a_agent, out_layer, hid_layer_act, hid_layer, X, W1, W2, b1, b2)
+                    #W1, W2[:, a_agent], b1, b2[a_agent] = self.nn.Backpropagation(self.eta, a_agent, delta, Q_values, hid_layer_act, X, W1, W2, b1, b2)
+                    W1, W2[:, a_agent], b1, b2[a_agent] = self.nn.Backpropagation_v3(self.eta, a_agent, delta, out_layer, hid_layer_act, hid_layer, X, W1, W2, b1, b2)
 
-                    if self.eligibility_trace:
-                        W1=W1+self.eta*delta*e1
-                        e1=self.gamma*lamb*e1
-                        W2[:, a_agent]=W2[:, a_agent]+self.eta*delta*e2[:, a_agent]
-                        e2=self.gamma*lamb*e2
                 
                 # NEXT STATE AND CO. BECOME ACTUAL STATE...
                 S=np.copy(S_next)
