@@ -16,9 +16,11 @@ class Chess_SARSA:
         self.beta = config["beta"]
         self.gamma = config["gamma"]
         self.eta = config["eta"]
-        self.eligibility_trace = config["eligibility_trace"]
         self.s = config["s"]
         self.Reward_Check = config["Reward_Check"]
+        self.xavier = config["xavier_init"]
+        self.activation = config["activation"]
+        self.optimizer = config["optimizer"]
         self.nn = NN()
         self.h = helpers()
 
@@ -33,14 +35,18 @@ class Chess_SARSA:
 
         #Initialise random seeded array
         np.random.seed(self.s)
-        ## INITALISE YOUR NEURAL NETWORK...
-        ##Xavier init
-        W1=np.random.randn(N_in, self.N_h)*np.sqrt(1/(N_in))
-        W2=np.random.randn(self.N_h, N_a)*np.sqrt(1/self.N_h)
-        #W1=np.random.uniform(0,1,[N_in,self.N_h])/(N_in+self.N_h)
-        b1=np.zeros([self.N_h])
 
-        #W2=np.random.uniform(0,1,[self.N_h,N_a])/(N_in+self.N_h)
+        ## INITALISE YOUR NEURAL NETWORK...
+
+        ##Xavier init
+        if self.xavier:
+            W1=np.random.randn(N_in, self.N_h)*np.sqrt(1/(N_in))
+            W2=np.random.randn(self.N_h, N_a)*np.sqrt(1/self.N_h)
+        else:
+            W1=np.random.uniform(0,300,[N_in,self.N_h])/(N_in+self.N_h)
+            W2=np.random.uniform(0,300,[self.N_h,N_a])/(N_in+self.N_h)
+
+        b1=np.zeros([self.N_h])
         b2=np.zeros([N_a])
 
         # SAVING VARIABLES
@@ -56,9 +62,13 @@ class Chess_SARSA:
             S,X,allowed_a=self.env.Initialise_game()           ## INITIALISE GAME
 
             #Forward pass neural network
-            #Q_values, hid_layer_act = self.nn.Forwardprop(X, W1, b1, W2, b2)
-            Q_values, out_layer, hid_layer_act, hid_layer = self.nn.Forwardprop(X, W1, b1, W2, b2)
-
+            if self.activation == "relu":
+                Q_values, out_layer, hid_layer_act, hid_layer = self.nn.Forwardprop_relu(X, W1, b1, W2, b2)
+            elif self.activation == "sigmoid":
+                Q_values, hid_layer_act = self.nn.Forwardprop_sigmoid(X, W1, b1, W2, b2)
+            else:
+                raise Exception("This activation function not implemented in Neural Network!")
+    
             #Get the index of the aLlowed actions
             idx_allowed,_=np.where(allowed_a==1)
 
@@ -75,16 +85,21 @@ class Chess_SARSA:
                     ##Uncomment the if and else to augment reward conditionnaly on a short path
                     if R==1:
                         #if i<=5:
-                            Rw = self.Reward_Check
+                        Rw = self.Reward_Check
                         #else: Rw = 1
-                    else: Rw = 0
+                    else: 
+                        Rw = 0
 
                     #calculate the error
                     delta=Rw-Q_values[a_agent]
 
                     #backpropagate the error
-                    #W1, W2[:, a_agent], b1, b2[a_agent]= self.nn.Backpropagation(self.eta, a_agent, delta, Q_values, hid_layer_act, X, W1, W2, b1, b2)
-                    W1, W2[:, a_agent], b1, b2[a_agent]= self.nn.Backpropagation_v3(self.eta, a_agent, delta, out_layer, hid_layer_act, hid_layer, X, W1, W2, b1, b2)
+                    if self.activation == "relu" and self.optimizer == "gd":
+                        W1, W2[:, a_agent], b1, b2[a_agent]= self.nn.Backpropagation_relu(self.eta, a_agent, delta, out_layer, hid_layer_act, hid_layer, X, W1, W2, b1, b2)
+                    elif self.activation == "sigmoid" and self.optimizer == "gd":
+                        W1, W2[:, a_agent], b1, b2[a_agent]= self.nn.Backpropagation_sigmoid(self.eta, a_agent, delta, Q_values, hid_layer_act, X, W1, W2, b1, b2)
+                    else:
+                        raise Exception("This activation function not implemented in Neural Network!")
 
                     self.R_save[n]=np.copy(R)
                     self.N_moves_save[n]=np.copy(i)
@@ -95,9 +110,13 @@ class Chess_SARSA:
                 # IF THE EPISODE IS NOT OVER...
                 else:
                     #Get the qvalues of the next state
-                    #Q_values_next, _ = self.nn.Forwardprop(X_next, W1, b1, W2, b2)
-                    Q_values_next, _, _, _ = self.nn.Forwardprop(X_next, W1, b1, W2, b2)
-
+                    if self.activation == "relu":
+                        Q_values_next, _, _, _ = self.nn.Forwardprop_relu(X_next, W1, b1, W2, b2)
+                    elif self.activation == "sigmoid":
+                        Q_values_next, _ = self.nn.Forwardprop_sigmoid(X_next, W1, b1, W2, b2)
+                    else:
+                        raise Exception("This activation function not implemented in Neural Network!")
+    
                     #selecting the qvalues of the allowed actions
                     idx_allowed_next,_=np.where(allowed_a_next==1)
                     Q_values_allowed_next=Q_values_next[idx_allowed_next]
@@ -109,10 +128,13 @@ class Chess_SARSA:
                     delta=R+self.gamma*Q_values_next[a_agent_next]-Q_values[a_agent]
 
                     #backpropagate the error and update the weights
-                    #W1, W2[:, a_agent], b1, b2[a_agent] = self.nn.Backpropagation(self.eta, a_agent, delta, Q_values, hid_layer_act, X, W1, W2, b1, b2)
-                    W1, W2[:, a_agent], b1, b2[a_agent] = self.nn.Backpropagation_v3(self.eta, a_agent, delta, out_layer, hid_layer_act, hid_layer, X, W1, W2, b1, b2)
+                    if self.activation == "relu" and self.optimizer == "gd":
+                        W1, W2[:, a_agent], b1, b2[a_agent] = self.nn.Backpropagation_relu(self.eta, a_agent, delta, out_layer, hid_layer_act, hid_layer, X, W1, W2, b1, b2)
+                    elif self.activation == "sigmoid" and self.optimizer == "gd":
+                        W1, W2[:, a_agent], b1, b2[a_agent]= self.nn.Backpropagation_sigmoid(self.eta, a_agent, delta, Q_values, hid_layer_act, X, W1, W2, b1, b2)
+                    else:
+                        raise Exception("This activation function not implemented in Neural Network!")
 
-                
                 # NEXT STATE AND CO. BECOME ACTUAL STATE...
                 S=np.copy(S_next)
                 X=np.copy(X_next)
