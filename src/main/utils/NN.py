@@ -57,9 +57,9 @@ class NN:
         return  W1,  W2[:, a_agent], b1, b2[a_agent]
 
     def Backpropagation_relu(self, eta, a_agent, delta, out_layer, hid_layer_act, hid_layer, x,  W1, W2, b1, b2):
+        # gradient descent optimizer
         delta_W2 = delta*hid_layer_act*(out_layer[a_agent]>0)
         delta_W1 = np.outer(x, (delta*(out_layer[a_agent]>0)*W2[:,a_agent]*(hid_layer>0)))
-
         W2[:, a_agent]=W2[:, a_agent]+eta*delta_W2
         b2[a_agent]=b2[a_agent]+eta*delta*(out_layer[a_agent]>0)
 
@@ -67,7 +67,29 @@ class NN:
         b1=b1+eta*delta*(out_layer[a_agent]>0)*W2[:,a_agent]*(hid_layer>0)
         return  W1,  W2[:, a_agent], b1, b2[a_agent]
     
+    def Backpropagation_relu_rmsprop(self, eta, beta, a_agent, delta, out_layer, hid_layer_act, hid_layer, x,  W1, W2, b1, b2, sdw1, sdw2, sdb1, sdb2):
+        #rms prop optimizer
+        delta_W2 = delta*hid_layer_act*(out_layer[a_agent]>0)
+        delta_W1 = np.outer(x, (delta*(out_layer[a_agent]>0)*W2[:,a_agent]*(hid_layer>0)))
+
+        delta_b2 = delta*(out_layer[a_agent]>0)
+        delta_b1 = delta*(out_layer[a_agent]>0)*W2[:,a_agent]*(hid_layer>0)
+
+        sdw2 = beta*sdw2 + (1-beta)*(delta_W2**2)
+        sdw1 = beta*sdw1 + (1-beta)*(delta_W1**2)
+
+        sdb2 = beta*sdb2 + (1-beta)*(delta_b2**2)
+        sdb1 = beta*sdb1 + (1-beta)*(delta_b1**2)
+
+        W2[:, a_agent]=W2[:, a_agent]+(eta*delta_W2)/np.sqrt(sdw2)
+        b2[a_agent]=b2[a_agent]+(eta*delta_b2)/np.sqrt(sdb2[a_agent])
+
+        W1=W1+(eta*delta_W1)/np.sqrt(sdw1)
+        b1=b1+(eta*delta_b1)/np.sqrt(sdb1)
+        return  W1,  W2[:, a_agent], b1, b2[a_agent], sdw1, sdw2, sdb1, sdb2
+    
     def Backpropagation_sigmoid(self, eta, a_agent, delta, x2, x1, x,  W1, W2, b1, b2):
+        # gradient descent optimizer
         delta2 = x2[a_agent]*(1-x2[a_agent])
         delta_W2 = x1*delta2
         

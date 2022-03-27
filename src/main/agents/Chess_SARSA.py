@@ -21,6 +21,7 @@ class Chess_SARSA:
         self.xavier = config["xavier_init"]
         self.activation = config["activation"]
         self.optimizer = config["optimizer"]
+        self.momentum = config["momentum"]
         self.nn = NN()
         self.h = helpers()
 
@@ -49,9 +50,16 @@ class Chess_SARSA:
         b1=np.zeros([self.N_h])
         b2=np.zeros([N_a])
 
+        if self.optimizer == "rmsprop":
+            sdw1 = np.ones((N_in, self.N_h))
+            sdw2 = np.ones([self.N_h])
+            sdb1 = np.ones([self.N_h])
+            sdb2 = np.ones([N_a])
+
         # SAVING VARIABLES
         self.R_save = np.zeros([self.N_episodes, 1])
         self.N_moves_save = np.zeros([self.N_episodes, 1])
+
 
         # TRAINING LOOP BONE STRUCTURE...
         for n in tqdm(range(self.N_episodes)):
@@ -63,9 +71,9 @@ class Chess_SARSA:
 
             #Forward pass neural network
             if self.activation == "relu":
-                Q_values, out_layer, hid_layer_act, hid_layer = self.nn.Forwardprop_relu(X, W1, b1, W2, b2)
+                Q_values, h2, x1, h1 = self.nn.Forwardprop_relu(X, W1, b1, W2, b2)
             elif self.activation == "sigmoid":
-                Q_values, hid_layer_act = self.nn.Forwardprop_sigmoid(X, W1, b1, W2, b2)
+                Q_values, x1 = self.nn.Forwardprop_sigmoid(X, W1, b1, W2, b2)
             else:
                 raise Exception("This activation function not implemented in Neural Network!")
     
@@ -95,9 +103,11 @@ class Chess_SARSA:
 
                     #backpropagate the error
                     if self.activation == "relu" and self.optimizer == "gd":
-                        W1, W2[:, a_agent], b1, b2[a_agent]= self.nn.Backpropagation_relu(self.eta, a_agent, delta, out_layer, hid_layer_act, hid_layer, X, W1, W2, b1, b2)
+                        W1, W2[:, a_agent], b1, b2[a_agent]= self.nn.Backpropagation_relu(self.eta, a_agent, delta, h2, x1, h1, X, W1, W2, b1, b2)
                     elif self.activation == "sigmoid" and self.optimizer == "gd":
-                        W1, W2[:, a_agent], b1, b2[a_agent]= self.nn.Backpropagation_sigmoid(self.eta, a_agent, delta, Q_values, hid_layer_act, X, W1, W2, b1, b2)
+                        W1, W2[:, a_agent], b1, b2[a_agent]= self.nn.Backpropagation_sigmoid(self.eta, a_agent, delta, Q_values, x1, X, W1, W2, b1, b2)
+                    elif self.activation == "relu" and self.optimizer == "rmsprop":
+                        W1, W2[:, a_agent], b1, b2[a_agent], sdw1, sdw2, sdb1, sdb2 = self.nn.Backpropagation_relu_rmsprop(self.eta, self.momentum, a_agent, delta, h2, x1, h1, X, W1, W2, b1, b2, sdw1, sdw2, sdb1, sdb2)
                     else:
                         raise Exception("This activation function not implemented in Neural Network!")
 
@@ -129,9 +139,11 @@ class Chess_SARSA:
 
                     #backpropagate the error and update the weights
                     if self.activation == "relu" and self.optimizer == "gd":
-                        W1, W2[:, a_agent], b1, b2[a_agent] = self.nn.Backpropagation_relu(self.eta, a_agent, delta, out_layer, hid_layer_act, hid_layer, X, W1, W2, b1, b2)
+                        W1, W2[:, a_agent], b1, b2[a_agent] = self.nn.Backpropagation_relu(self.eta, a_agent, delta, h2, x1, h1, X, W1, W2, b1, b2)
                     elif self.activation == "sigmoid" and self.optimizer == "gd":
-                        W1, W2[:, a_agent], b1, b2[a_agent]= self.nn.Backpropagation_sigmoid(self.eta, a_agent, delta, Q_values, hid_layer_act, X, W1, W2, b1, b2)
+                        W1, W2[:, a_agent], b1, b2[a_agent]= self.nn.Backpropagation_sigmoid(self.eta, a_agent, delta, Q_values, x1, X, W1, W2, b1, b2)
+                    elif self.activation == "relu" and self.optimizer == "rmsprop":
+                        W1, W2[:, a_agent], b1, b2[a_agent], sdw1, sdw2, sdb1, sdb2 = self.nn.Backpropagation_relu_rmsprop(self.eta,self.momentum, a_agent, delta, h2, x1, h1, X, W1, W2, b1, b2, sdw1, sdw2, sdb1, sdb2)
                     else:
                         raise Exception("This activation function not implemented in Neural Network!")
 
