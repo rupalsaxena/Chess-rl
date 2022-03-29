@@ -9,5 +9,5 @@ epsilon_0: 0.2    # STARTING VALUE OF EPSILON FOR THE EPSILON-GREEDY POLICY ##Or
 beta: 0.001     # current best best
 gamma: 0.95     # current best best
 eta: 0.0035       # THE LEARNING RATE
-N_episodes: 10000 # THE NUMBER OF GAMES TO BE PLAYED
+N_episodes: 100000 # THE NUMBER OF GAMES TO BE PLAYED
 eligibility_trace: False
