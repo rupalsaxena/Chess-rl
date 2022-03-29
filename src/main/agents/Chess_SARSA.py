@@ -30,16 +30,16 @@ class Chess_SARSA:
 
     def train(self):
         S,X,allowed_a=self.env.Initialise_game()
-        N_a=np.shape(allowed_a)[0]# TOTAL NUMBER OF POSSIBLE ACTIONS
+        N_a=np.shape(allowed_a)[0] # TOTAL NUMBER OF POSSIBLE ACTIONS
 
-        N_in=np.shape(X)[0]    ## INPUT SIZE
+        N_in=np.shape(X)[0]    # INPUT SIZE
 
-        #Initialise random seeded array
+        # Initialise random seeded array
         np.random.seed(self.s)
 
-        ## INITALISE YOUR NEURAL NETWORK...
+        # INITALISE YOUR NEURAL NETWORK...
 
-        ##Xavier init
+        # Xavier init
         if self.xavier:
             W1=np.random.randn(N_in, self.N_h)*np.sqrt(1/(N_in))
             W2=np.random.randn(self.N_h, N_a)*np.sqrt(1/self.N_h)
@@ -92,9 +92,7 @@ class Chess_SARSA:
                     ##For the change of the representation of the reward
                     ##Uncomment the if and else to augment reward conditionnaly on a short path
                     if R==1:
-                        #if i<=5:
                         Rw = self.Reward_Check
-                        #else: Rw = 1
                     else: 
                         Rw = 0
 
@@ -156,24 +154,6 @@ class Chess_SARSA:
                 i += 1  # UPDATE COUNTER FOR NUMBER OF ACTIONS
 
         print('My Agent, Average reward:',np.mean(self.R_save),'Number of steps: ',np.mean(self.N_moves_save))
-
-    """def plot(self):
-        pandaR = pd.DataFrame(self.R_save)
-        pandaN = pd.DataFrame(self.N_moves_save)
-        ema_r = pandaR.ewm(alpha=0.001, adjust = False).mean()
-        ema_m = pandaN.ewm(alpha=0.001, adjust = False).mean()
-        time=np.arange(1, (len(self.R_save)+1))
-
-        ##Only one at a time and no subplot would look better but in the meantime
-        plt.subplot(2, 1, 1)
-        plt.scatter(time, ema_m)
-        plt.xlabel("Time")
-        plt.ylabel("Average number of moves")
-        plt.subplot(2, 1, 2)
-        plt.scatter(time, ema_r)
-        plt.xlabel("Time")
-        plt.ylabel("Average reward")
-        plt.show()"""
     
     def plot(self):
         # Storing reward and move count
@@ -185,10 +165,6 @@ class Chess_SARSA:
         alpha = 2 / (self.N_episodes + 1)
         ema_r = pandaR.ewm(alpha=alpha).mean()
         ema_m = pandaN.ewm(alpha=alpha).mean()
-
-        # Simple moving average used for low-repetition trainings
-        # ema_r = pandaR.rolling(window=15).mean()
-        # ema_m = pandaN.rolling(window=15).mean()
 
         reward_plot = ema_r.plot.line(legend=False)
         reward_plot.set_xlabel("Episode")

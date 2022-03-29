@@ -89,6 +89,7 @@ class Chess_QLearning:
                 if Done == 1:
                     # calculate the error
                     delta = R - Q_values[a_agent]
+
                     # backpropagate the error
                     W1, W2[:, a_agent], b1, b2[a_agent] = self.nn.Backpropagation(self.eta, a_agent, delta, Q_values,
                                                                                   hid_layer_act, X, W1, W2, b1, b2)
@@ -152,7 +153,6 @@ class Chess_QLearning:
         # Simple moving average used for low-repetition trainings
         # ema_r = pandaR.rolling(window=15).mean()
         # ema_m = pandaN.rolling(window=15).mean()
-
 
         reward_plot = ema_r.plot.line(legend=False)
         reward_plot.set_xlabel("Episode")
