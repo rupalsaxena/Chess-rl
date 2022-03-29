@@ -1,0 +1,20 @@
+# config for exploding gradients network
+algo: sarsa
+analyse: False     # False if u don't wanna print init analysis # True otherwise
+N_h: 200           # NUMBER OF HIDDEN NODES
+epsilon_0: 0.2     # STARTING VALUE OF EPSILON FOR THE EPSILON-GREEDY POLICY ##Original value of epsilon: 0.2
+
+#beta: 0.00005     # THE PARAMETER SETS HOW QUICKLY THE VALUE OF EPSILON IS DECAYING # old parameters
+#gamma: 0.85       # THE DISCOUNT FACTOR # old parameters
+
+beta: 0.001        # current best beta
+gamma: 0.95        # current best gamma
+
+eta: 0.0035        # THE LEARNING RATE
+N_episodes: 1000   # THE NUMBER OF GAMES TO BE PLAYED
+s: 3               # Random seed to ensure reproduciility TO NOT MODIFY
+Reward_Check: 1    # Reward if check; used to change reward representation
+xavier_init: False # True, False
+activation: relu   # Activation function to choose from (options: relu, sigmoid)
+optimizer: gd      # Optimizer to choose from (options: gd, rmsprop)
+momentum: 0.9      # momentum for RMS prop
