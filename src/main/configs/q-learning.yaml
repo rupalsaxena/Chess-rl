@@ -7,5 +7,5 @@ epsilon_0: 0.2    # STARTING VALUE OF EPSILON FOR THE EPSILON-GREEDY POLICY ##Or
 beta: 0.01        # new parameters
 gamma: 0.75       # new parameters
 eta: 0.035       # THE LEARNING RATE
-N_episodes: 1000 # THE NUMBER OF GAMES TO BE PLAYED
+N_episodes: 10000 # THE NUMBER OF GAMES TO BE PLAYED
 eligibility_trace: False
