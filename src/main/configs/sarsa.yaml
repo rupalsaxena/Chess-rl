@@ -17,8 +17,3 @@ xavier_init: True  # True, False
 activation: relu   # Activation function to choose from (options: relu, sigmoid)
 optimizer: gd      # Optimizer to choose from (options: gd, rmsprop)
 momentum: 0.9      # momentum for RMS prop
-
-#Note for exploding gradients: 
-#xavier_init: False, activation: relu, optimizer: gd
-#Exploding gradients fixed: 
-#xavier_init: False, activation: relu, optimizer: rmsprop

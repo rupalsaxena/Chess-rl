@@ -110,7 +110,6 @@ class Chess_SARSA:
                         delta, h2, x1, h1, X, W1, W2, b1, b2, sdw1, sdw2, sdb1, sdb2)
                     else:
                         raise Exception("Backpropagation for this combination of activation function and optimizer is not implemented in Neural Network!")
-
                     self.R_save[n]=np.copy(R)
                     self.N_moves_save[n]=np.copy(i)
 
@@ -146,6 +145,10 @@ class Chess_SARSA:
                         W1, W2[:, a_agent], b1, b2[a_agent], sdw1, sdw2, sdb1, sdb2 = self.nn.Backpropagation_relu_rmsprop(self.eta,self.momentum, a_agent, delta, h2, x1, h1, X, W1, W2, b1, b2, sdw1, sdw2, sdb1, sdb2)
                     else:
                         raise Exception("This activation function not implemented in Neural Network!")
+
+                #uncomment this part to print W1 values. Used for showing exploding gradients and it's fix.
+                #filename= "fixed_weights/W1_"+str(n)+"_"+str(i)
+                #W1.tofile(filename, sep=",")
 
                 # NEXT STATE AND CO. BECOME ACTUAL STATE...
                 S=np.copy(S_next)
