@@ -157,7 +157,7 @@ class Chess_SARSA:
 
         print('My Agent, Average reward:',np.mean(self.R_save),'Number of steps: ',np.mean(self.N_moves_save))
 
-    def plot(self):
+    """def plot(self):
         pandaR = pd.DataFrame(self.R_save)
         pandaN = pd.DataFrame(self.N_moves_save)
         ema_r = pandaR.ewm(alpha=0.001, adjust = False).mean()
@@ -173,4 +173,29 @@ class Chess_SARSA:
         plt.scatter(time, ema_r)
         plt.xlabel("Time")
         plt.ylabel("Average reward")
+        plt.show()"""
+    
+    def plot(self):
+        # Storing reward and move count
+        pandaR = pd.DataFrame(self.R_save)
+        pandaN = pd.DataFrame(self.N_moves_save)
+
+        # We compute the exponential moving average
+        # Standard approach for setting alpha
+        alpha = 2 / (self.N_episodes + 1)
+        ema_r = pandaR.ewm(alpha=alpha).mean()
+        ema_m = pandaN.ewm(alpha=alpha).mean()
+
+        # Simple moving average used for low-repetition trainings
+        # ema_r = pandaR.rolling(window=15).mean()
+        # ema_m = pandaN.rolling(window=15).mean()
+
+        reward_plot = ema_r.plot.line(legend=False)
+        reward_plot.set_xlabel("Episode")
+        reward_plot.set_ylabel("Avg. reward")
+
+        move_plot = ema_m.plot.line(legend=False, color='red')
+        move_plot.set_xlabel("Episode")
+        move_plot.set_ylabel("Avg. moves")
+
         plt.show()
