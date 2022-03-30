@@ -31,6 +31,14 @@ chmod +x random.sh
 ./random.sh
 ```
 
+To run sarsa with exploding gradients:
+```
+# only one time command
+chmod +x sarsa_explode.sh
+# run sarsa explode gradients 
+./sarsa_explode.sh
+```
+
 Alternate method to run the code is as follows:
 Go to src/main/main.py file, choose your config path of choice. 
 Please make sure to comment 
@@ -42,6 +50,7 @@ Please make sure to uncomment your config of choice:
 CONFIG_PATH = "src/main/configs/sarsa.yaml"
 #CONFIG_PATH = "src/main/configs/q-learning.yaml"
 #CONFIG_PATH = "src/main/configs/random.yaml"
+#CONFIG_PATH = "src/main/configs/sarsa_explode_gradients.yaml"
 ```
 Save the changes and then run the following:
 ```
