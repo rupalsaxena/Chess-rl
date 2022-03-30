@@ -199,6 +199,18 @@ class Chess_Env:
         K2dof=np.zeros([8])   # NUMBER OF ALLOWED ACTIONS FOR ENEMY'S KING, ONE-HOT ENCODED
         K2dof[np.sum(self.dfk2_constrain).astype(int)]=1
         
+        ##Task 6 : Change in state representation.
+        ##Changes to the one hot encoding: removal of the last digit.
+        ##Now, all zeros correspond to the 16th square / to a degree of freedom of 8.
+        #s_k1 = s_k1[:-1]
+        #s_q1 = s_q1[:-1]
+        #s_k2 = s_k2[:-1]
+        #K2dof = K2dof[:-1]
+        ##Similarly for check: only encoded in one digit instead of 2
+        #check=np.zeros([1])    ##Simpler check: check=1, draw=0
+        #check[0]=self.check
+
+        
         # ALL FEATURES...
         x = np.concatenate([s_k1, s_q1, s_k2, check, K2dof],0)
         
