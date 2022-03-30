@@ -59,7 +59,6 @@ class Chess_SARSA:
         self.R_save = np.zeros([self.N_episodes, 1])
         self.N_moves_save = np.zeros([self.N_episodes, 1])
 
-
         # TRAINING LOOP BONE STRUCTURE...
         for n in tqdm(range(self.N_episodes)):
             epsilon_f = self.epsilon_0 / (1 + self.beta * n)   ## DECAYING EPSILON
@@ -146,10 +145,6 @@ class Chess_SARSA:
                     else:
                         raise Exception("This activation function not implemented in Neural Network!")
 
-                #uncomment this part to print W1 values. Used for showing exploding gradients and it's fix.
-                #filename= "fixed_weights/W1_"+str(n)+"_"+str(i)
-                #W1.tofile(filename, sep=",")
-
                 # NEXT STATE AND CO. BECOME ACTUAL STATE...
                 S=np.copy(S_next)
                 X=np.copy(X_next)
@@ -171,6 +166,7 @@ class Chess_SARSA:
         ema_r = pandaR.ewm(alpha=alpha).mean()
         ema_m = pandaN.ewm(alpha=alpha).mean()
 
+        # plotting
         reward_plot = ema_r.plot.line(legend=False)
         reward_plot.set_xlabel("Episode")
         reward_plot.set_ylabel("Avg. reward")
