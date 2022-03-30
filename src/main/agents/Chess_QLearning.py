@@ -18,7 +18,6 @@ class Chess_QLearning:
         self.beta = config["beta"]
         self.gamma = config["gamma"]
         self.eta = config["eta"]
-        self.eligibility_trace = config["eligibility_trace"]
 
         self.nn = NN()
         self.h = helpers()
@@ -28,7 +27,9 @@ class Chess_QLearning:
 
     def train(self):
         print('Training q-learning and initializing seed')
-        np.random.seed(0)
+
+        np.random.seed(3)
+
         S, X, allowed_a = self.env.Initialise_game()
         N_a = np.shape(allowed_a)[0]  # TOTAL NUMBER OF POSSIBLE ACTIONS
 
@@ -38,20 +39,13 @@ class Chess_QLearning:
         ##Xavier init
         W1 = np.random.randn(N_in, self.N_h) * np.sqrt(1 / (N_in))
         W2 = np.random.randn(self.N_h, N_a) * np.sqrt(1 / self.N_h)
-        # W1=np.random.uniform(0,1,[N_in,self.N_h])/(N_in+self.N_h)
-        b1 = np.zeros([self.N_h])
 
-        # W2=np.random.uniform(0,1,[self.N_h,N_a])/(N_in+self.N_h)
+        b1 = np.zeros([self.N_h])
         b2 = np.zeros([N_a])
 
         # SAVING VARIABLES
         self.R_save = np.zeros([self.N_episodes, 1])
         self.N_moves_save = np.zeros([self.N_episodes, 1])
-
-        # Added Eligibility Trace; parameters taken from lab 3
-        if self.eligibility_trace:
-            lamb = 0.3
-            self.eta = 0.08
 
         # TRAINING LOOP BONE STRUCTURE...
         for n in tqdm(range(self.N_episodes)):
@@ -62,7 +56,7 @@ class Chess_QLearning:
             S, X, allowed_a = self.env.Initialise_game()  ## INITIALISE GAME
 
             # Forward pass neural network
-            Q_values, hid_layer_act = self.nn.Forwardprop_v1(X, W1, b1, W2, b2)
+            Q_values, hid_layer_act = self.nn.Forwardprop(X, W1, b1, W2, b2)
 
             # Get the index of the aLlowed actions
             idx_allowed, _ = np.where(allowed_a == 1)
@@ -71,18 +65,7 @@ class Chess_QLearning:
             Q_values_allowed = Q_values[idx_allowed]
             a_agent = self.h.epsilongreedy(Q_values_allowed, idx_allowed, epsilon_f)
 
-            # Initialise eligibility traces
-            # e1: everything gets updated
-            # e2: only the action taken gets updated
-            if self.eligibility_trace == True:
-                e1 = np.zeros([N_in, self.N_h])
-                e2 = np.zeros([self.N_h, N_a])
-
             while Done == 0:  ## START THE EPISODE
-                if self.eligibility_trace:
-                    e1 = e1 + 1
-                    e2[:, a_agent] = e2[:, a_agent] + 1
-
                 S_next, X_next, allowed_a_next, R, Done = self.env.OneStep(a_agent)
 
                 ## THE EPISODE HAS ENDED, UPDATE...BE CAREFUL, THIS IS THE LAST STEP OF THE EPISODE
@@ -94,10 +77,6 @@ class Chess_QLearning:
                     W1, W2[:, a_agent], b1, b2[a_agent] = self.nn.Backpropagation(self.eta, a_agent, delta, Q_values,
                                                                                   hid_layer_act, X, W1, W2, b1, b2)
 
-                    if self.eligibility_trace:
-                        W1 = W1 + self.eta * delta * e1
-                        W2[:, a_agent] = W2[:, a_agent] + self.eta * delta * e2[:, a_agent]
-
                     self.R_save[n] = np.copy(R)
                     self.N_moves_save[n] = np.copy(i)
 
@@ -107,7 +86,7 @@ class Chess_QLearning:
                 # IF THE EPISODE IS NOT OVER...
                 else:
                     # Get the qvalues of the next state
-                    Q_values_next, _ = self.nn.Forwardprop_v1(X_next, W1, b1, W2, b2)
+                    Q_values_next, _ = self.nn.Forwardprop(X_next, W1, b1, W2, b2)
 
                     # selecting the qvalues of the allowed actions
                     idx_allowed_next, _ = np.where(allowed_a_next == 1)
@@ -122,12 +101,6 @@ class Chess_QLearning:
                     # backpropagate the error and update the weights
                     W1, W2[:, a_agent], b1, b2[a_agent] = self.nn.Backpropagation(self.eta, a_agent, delta, Q_values,
                                                                                   hid_layer_act, X, W1, W2, b1, b2)
-
-                    if self.eligibility_trace:
-                        W1 = W1 + self.eta * delta * e1
-                        e1 = self.gamma * lamb * e1
-                        W2[:, a_agent] = W2[:, a_agent] + self.eta * delta * e2[:, a_agent]
-                        e2 = self.gamma * lamb * e2
 
                 # NEXT STATE AND CO. BECOME ACTUAL STATE...
                 S = np.copy(S_next)

@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 
 from env.Chess_env import Chess_Env
-from env.generate_game import generate_game
 from utils.NN import NN
 from utils.helpers import helpers
 
@@ -32,13 +31,12 @@ class Chess_SARSA:
         S,X,allowed_a=self.env.Initialise_game()
         N_a=np.shape(allowed_a)[0] # TOTAL NUMBER OF POSSIBLE ACTIONS
 
-        N_in=np.shape(X)[0]    # INPUT SIZE
+        N_in=np.shape(X)[0]        # INPUT SIZE
 
         # Initialise random seeded array
         np.random.seed(self.s)
 
         # INITALISE YOUR NEURAL NETWORK...
-
         # Xavier init
         if self.xavier:
             W1=np.random.randn(N_in, self.N_h)*np.sqrt(1/(N_in))
@@ -59,7 +57,6 @@ class Chess_SARSA:
         # SAVING VARIABLES
         self.R_save = np.zeros([self.N_episodes, 1])
         self.N_moves_save = np.zeros([self.N_episodes, 1])
-
 
         # TRAINING LOOP BONE STRUCTURE...
         for n in tqdm(range(self.N_episodes)):
@@ -89,10 +86,12 @@ class Chess_SARSA:
 
                 ## THE EPISODE HAS ENDED, UPDATE...BE CAREFUL, THIS IS THE LAST STEP OF THE EPISODE
                 if Done==1:
-                    ##For the change of the representation of the reward
-                    ##Uncomment the if and else to augment reward conditionnaly on a short path
+                    # For the change of the representation of the reward
+                    # Uncomment the if and else to augment reward conditionnaly on a short path
                     if R==1:
+                        #if i<=5:
                         Rw = self.Reward_Check
+                        #else: Rw = 1
                     else: 
                         Rw = 0
 
@@ -105,10 +104,10 @@ class Chess_SARSA:
                     elif self.activation == "sigmoid" and self.optimizer == "gd":
                         W1, W2[:, a_agent], b1, b2[a_agent]= self.nn.Backpropagation_sigmoid(self.eta, a_agent, delta, Q_values, x1, X, W1, W2, b1, b2)
                     elif self.activation == "relu" and self.optimizer == "rmsprop":
-                        W1, W2[:, a_agent], b1, b2[a_agent], sdw1, sdw2, sdb1, sdb2 = self.nn.Backpropagation_relu_rmsprop(self.eta, self.momentum, a_agent, delta, h2, x1, h1, X, W1, W2, b1, b2, sdw1, sdw2, sdb1, sdb2)
+                        W1, W2[:, a_agent], b1, b2[a_agent], sdw1, sdw2, sdb1, sdb2 = self.nn.Backpropagation_relu_rmsprop(self.eta, self.momentum, a_agent,
+                        delta, h2, x1, h1, X, W1, W2, b1, b2, sdw1, sdw2, sdb1, sdb2)
                     else:
-                        raise Exception("This activation function not implemented in Neural Network!")
-
+                        raise Exception("Backpropagation for this combination of activation function and optimizer is not implemented in Neural Network!")
                     self.R_save[n]=np.copy(R)
                     self.N_moves_save[n]=np.copy(i)
 
@@ -166,10 +165,10 @@ class Chess_SARSA:
         ema_r = pandaR.ewm(alpha=alpha).mean()
         ema_m = pandaN.ewm(alpha=alpha).mean()
 
+        # plotting
         reward_plot = ema_r.plot.line(legend=False)
         reward_plot.set_xlabel("Episode")
         reward_plot.set_ylabel("Avg. reward")
-
         move_plot = ema_m.plot.line(legend=False, color='red')
         move_plot.set_xlabel("Episode")
         move_plot.set_ylabel("Avg. moves")

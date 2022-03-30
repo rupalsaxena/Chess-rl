@@ -5,7 +5,6 @@ epsilon_0: 0.2     # STARTING VALUE OF EPSILON FOR THE EPSILON-GREEDY POLICY ##O
 #beta: 0.00005     # THE PARAMETER SETS HOW QUICKLY THE VALUE OF EPSILON IS DECAYING (SEE epsilon_f BELOW) # old parameters
 #gamma: 0.85       # THE DISCOUNT FACTOR # old parameters
 beta: 0.001        # current best beta
-gamma: 0.95        # current best gamma
-eta: 0.0035        # THE LEARNING RATE
-N_episodes: 100000 # THE NUMBER OF GAMES TO BE PLAYED
-eligibility_trace: False
+gamma: 0.85        # current best gamma
+eta: 0.0035       # THE LEARNING RATE
+N_episodes: 100000   # THE NUMBER OF GAMES TO BE PLAYED
