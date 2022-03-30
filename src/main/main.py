@@ -10,6 +10,7 @@ from utils.helpers import helpers
 CONFIG_PATH = "src/main/configs/sarsa.yaml"
 #CONFIG_PATH = "src/main/configs/q-learning.yaml"
 #CONFIG_PATH = "src/main/configs/random.yaml"
+#CONFIG_PATH = "src/main/configs/sarsa_explode_gradients.yaml"
 
 CONFIG_PATH = os.environ["CONFIG_PATH"]
 
