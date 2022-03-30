@@ -8,5 +8,3 @@ beta: 0.001        # current best beta
 gamma: 0.85        # current best gamma
 eta: 0.0035       # THE LEARNING RATE
 N_episodes: 100000   # THE NUMBER OF GAMES TO BE PLAYED
-optimizer: gd  # rmsprop, gd
-momentum: 0.99      # will be used only when rmsprop is used as optimizer

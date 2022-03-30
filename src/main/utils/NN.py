@@ -5,7 +5,7 @@ class NN:
     def __init__(self):
         self.h = helpers()
 
-    def Forwardprop_v1(self, x, W1, b1, W2, b2):
+    def Forwardprop(self, x, W1, b1, W2, b2):
         hid_layer = np.dot(x, W1)+b1
         hid_layer_act = np.maximum(hid_layer, 0)
         out_layer=np.dot(hid_layer_act, W2)+b2

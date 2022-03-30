@@ -31,13 +31,12 @@ class Chess_SARSA:
         S,X,allowed_a=self.env.Initialise_game()
         N_a=np.shape(allowed_a)[0] # TOTAL NUMBER OF POSSIBLE ACTIONS
 
-        N_in=np.shape(X)[0]    # INPUT SIZE
+        N_in=np.shape(X)[0]        # INPUT SIZE
 
         # Initialise random seeded array
         np.random.seed(self.s)
 
         # INITALISE YOUR NEURAL NETWORK...
-
         # Xavier init
         if self.xavier:
             W1=np.random.randn(N_in, self.N_h)*np.sqrt(1/(N_in))

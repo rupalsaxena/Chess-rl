@@ -16,8 +16,8 @@ s: 3               # Random seed to ensure reproduciility TO NOT MODIFY
 Reward_Check: 1    # Reward if check; used to change reward representation
 xavier_init: False # True, False
 activation: relu   # Activation function to choose from (options: relu, sigmoid)
-optimizer: rmsprop      # Optimizer to choose from (options: gd, rmsprop)
+optimizer: rmsprop  # Optimizer to choose from (options: gd, rmsprop)
 momentum: 0.9      # momentum for RMS prop
 
-#To generate exploding gradients, use gd as optimizer.
+#To see exploding gradients, use gd as optimizer.
 #To fix exploding gradients, use rmsprop optimizer.
