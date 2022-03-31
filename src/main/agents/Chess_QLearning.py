@@ -70,7 +70,7 @@ class Chess_QLearning:
 
                 ## THE EPISODE HAS ENDED, UPDATE...BE CAREFUL, THIS IS THE LAST STEP OF THE EPISODE
                 if Done == 1:
-                    # calculate the error
+                    # calculate the derivative of the error
                     delta = R - Q_values[a_agent]
 
                     # backpropagate the error
@@ -80,7 +80,6 @@ class Chess_QLearning:
                     self.R_save[n] = np.copy(R)
                     self.N_moves_save[n] = np.copy(i)
 
-                    ##TWO CHOICES: if R==1, then checkmate. Else, draw.
                     break
 
                 # IF THE EPISODE IS NOT OVER...
@@ -95,7 +94,7 @@ class Chess_QLearning:
                     # select the action with e-greedy
                     a_agent_next = self.h.epsilongreedy(Q_values_allowed_next, idx_allowed_next, epsilon_f)
 
-                    # Computing the error
+                    # Computing the derivative of the error
                     delta = R + self.gamma * np.max(Q_values_allowed_next) - Q_values[a_agent]
 
                     # backpropagate the error and update the weights
