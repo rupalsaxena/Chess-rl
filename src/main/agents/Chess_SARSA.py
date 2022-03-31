@@ -33,7 +33,7 @@ class Chess_SARSA:
 
         N_in=np.shape(X)[0]        # INPUT SIZE
 
-        # Initialise random seeded array
+        # Initialise random seed
         np.random.seed(self.s)
 
         # INITALISE YOUR NEURAL NETWORK...
@@ -95,10 +95,10 @@ class Chess_SARSA:
                     else: 
                         Rw = 0
 
-                    #calculate the error
+                    #calculate the derivative of the error
                     delta=Rw-Q_values[a_agent]
 
-                    #backpropagate the error
+                    #backpropagate that derivative
                     if self.activation == "relu" and self.optimizer == "gd":
                         W1, W2[:, a_agent], b1, b2[a_agent]= self.nn.Backpropagation_relu(self.eta, a_agent, delta, h2, x1, h1, X, W1, W2, b1, b2)
                     elif self.activation == "sigmoid" and self.optimizer == "gd":
@@ -111,7 +111,7 @@ class Chess_SARSA:
                     self.R_save[n]=np.copy(R)
                     self.N_moves_save[n]=np.copy(i)
 
-                    ##TWO CHOICES: if R==1, then checkmate. Else, draw.
+                  
                     break
 
                 # IF THE EPISODE IS NOT OVER...
@@ -131,7 +131,7 @@ class Chess_SARSA:
                     #select the action with e-greedy
                     a_agent_next = self.h.epsilongreedy(Q_values_allowed_next, idx_allowed_next, epsilon_f)
 
-                    #Computing the error
+                    #Computing the derivative of the error
                     delta=R+self.gamma*Q_values_next[a_agent_next]-Q_values[a_agent]
 
                     #backpropagate the error and update the weights
